@@ -1,0 +1,75 @@
+const express = require("express");
+const cors = require("cors");
+const bodyParser = require("body-parser");
+const MongoClient = require("mongodb").MongoClient;
+require("dotenv").config();
+
+//App used
+const app = express();
+app.use(cors());
+app.use(bodyParser.json());
+
+//set username and password protectively
+const username = process.env.DB_USER;
+const password = process.env.DB_PASS;
+const uri = process.env.DB_PATH;
+
+//Create a connection with MongoClient
+let client = new MongoClient(uri, { useNewUrlParser: true });
+
+//Route File for Home directory
+app.get("/", (req, res) => {
+  res.send(
+    "<h1 style='color:green;text-align:center;margin-top:20px'>Welcome To The Red Onion Restaurant Backend Side</h1>"
+  );
+});
+
+//Add new Products into the database
+app.post("/addfood", (req, res) => {
+  const food = req.body;
+  client = new MongoClient(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+  client.connect((err) => {
+    const collection = client.db("redOnionRestaurant").collection("foods");
+    collection.insert(food, (err, result) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send({ message: err });
+      } else {
+        res.send(result.ops);
+        console.log("Inserted Products successfully..");
+      }
+    });
+  });
+});
+
+//Get All Food Items Form Database
+app.get("/foods", (req, res) => {
+  client = new MongoClient(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+  client.connect((err) => {
+    const collection = client.db("redOnionRestaurant").collection("foods");
+    collection.find().toArray((err, document) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send({ message: err });
+      } else {
+        res.send(document);
+        console.log("Foods is get successfully from database");
+      }
+    });
+  });
+});
+
+app.all("*", (req, res) => {
+  res.send(
+    '<h1 style="color:red;text-align:center;margin-top:20px">Red Onion Restaurant Server Not Found</h1>'
+  );
+});
+
+const port = process.env.PORT || 4200;
+app.listen(port, (err) => console.log("Running on the port", port));
