@@ -89,6 +89,27 @@ app.get("/foods/:id", (req, res) => {
   });
 });
 
+//delete food items
+app.delete("/foods/delete/:id", (req, res) => {
+  const foodId = Number(req.params.id);
+  client = new MongoClient(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+  client.connect((err) => {
+    const collection = client.db("redOnionRestaurant").collection("foods");
+    collection.deleteOne({ id: foodId }).toArray((err, document) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send({ message: err });
+      } else {
+        res.send(document.ops[0]);
+        console.log(" Foods is  successfully deleted from database");
+      }
+    });
+  });
+});
+
 app.all("*", (req, res) => {
   res.send(
     '<h1 style="color:red;text-align:center;margin-top:20px">Red Onion Restaurant Server Not Found</h1>'
