@@ -15,7 +15,10 @@ const password = process.env.DB_PASSWORD;
 const uri = process.env.DB_PATH;
 
 //Create a connection with MongoClient
-let client = new MongoClient(uri, { useNewUrlParser: true });
+let client = new MongoClient(uri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 //Route File for Home directory
 app.get("/", (req, res) => {
