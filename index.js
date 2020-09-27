@@ -11,7 +11,7 @@ app.use(bodyParser.json());
 
 //set username and password protectively
 const username = process.env.DB_USER;
-const password = process.env.DB_PASS;
+const password = process.env.DB_PASSWORD;
 const uri = process.env.DB_PATH;
 
 //Create a connection with MongoClient
@@ -59,7 +59,28 @@ app.get("/foods", (req, res) => {
         res.status(500).send({ message: err });
       } else {
         res.send(document);
-        console.log("Foods is get successfully from database");
+        console.log(" Foods is get successfully from database");
+      }
+    });
+  });
+});
+
+//Find Food Item by id (single food)
+app.get("/foods/:id", (req, res) => {
+  const foodId = Number(req.params.id);
+  client = new MongoClient(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+  client.connect((err) => {
+    const collection = client.db("redOnionRestaurant").collection("foods");
+    collection.find({ id: foodId }).toArray((err, document) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send({ message: err });
+      } else {
+        res.send(document);
+        console.log("Single Foods is get successfully from database");
       }
     });
   });
