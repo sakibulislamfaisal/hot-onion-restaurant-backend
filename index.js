@@ -2,8 +2,6 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const MongoClient = require("mongodb").MongoClient;
-mongo = require('mongodb')
-var ObjectId = require('mongodb').ObjectID;
 require("dotenv").config();
 
 //App used
@@ -38,7 +36,7 @@ app.post("/addfood", (req, res) => {
   });
   client.connect((err) => {
     const collection = client.db("redOnionRestaurant").collection("foods");
-    collection.insert(food, (err, result) => {
+    collection.insertOne(food, (err, result) => {
       if (err) {
         console.log(err);
         res.status(500).send({ message: err });
@@ -121,7 +119,7 @@ app.post("/addfeature", (req, res) => {
   });
   client.connect((err) => {
     const collection = client.db("redOnionRestaurant").collection("feature");
-    collection.insert(feature, (err, result) => {
+    collection.insertOne(feature, (err, result) => {
       if (err) {
         console.log(err);
         res.status(500).send({ message: err });
@@ -153,10 +151,7 @@ app.get("/feature", (req, res) => {
   });
 });
 
-
-
-//Find feature by id (single feature)
-//Find Food Item by id (single food)
+//Find feature by id (single feature
 app.get("/feature/:id", (req, res) => {
   const featureId = Number(req.params.id);
   client = new MongoClient(uri, {
@@ -171,7 +166,7 @@ app.get("/feature/:id", (req, res) => {
         res.status(500).send({ message: err });
       } else {
         res.send(document);
-        console.log("Single featire is get successfully from database");
+        console.log("Single feature is get successfully from database");
       }
     });
   });
@@ -183,21 +178,25 @@ app.delete("/delete/:id", (req, res) => {
   client = new MongoClient(uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    useMongoClient: true,
+    keepAlive: 1,
+    connectTimeoutMS: 30000,
+    reconnectTries: 30,
+    reconnectInterval: 5000,
   });
   client.connect((err) => {
     const collection = client.db("redOnionRestaurant").collection("feature");
-    collection.deleteOne({ id: featureId }, function(error, result) {
-        if (error) throw error;
-        // send back entire updated list after successful request
-        collection.find().toArray(function(_error, _result) {
-            if (_error) throw _error;
-            res.json(_result);
-            console.log("Data is deleted successfully...")
-        });
+    collection.deleteOne({ id: featureId }, function (error, result) {
+      if (error) throw error;
+      // send back entire updated list after successful request
+      collection.find().toArray(function (_error, _result) {
+        if (_error) throw _error;
+        res.json(_result);
+        console.log("Data is deleted successfully...");
+      });
     });
   });
 });
-
 
 //Update feature into the database
 app.put("/update/feature/:id", (req, res) => {
@@ -206,22 +205,30 @@ app.put("/update/feature/:id", (req, res) => {
   client = new MongoClient(uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    useMongoClient: true,
+    keepAlive: 1,
+    connectTimeoutMS: 30000,
+    reconnectTries: 30,
+    reconnectInterval: 5000,
   });
   client.connect((err) => {
     const collection = client.db("redOnionRestaurant").collection("feature");
-    collection.updateOne({ id: featureId }, { $set: featureItem }, (error, result) => {
+    collection.updateOne(
+      { id: featureId },
+      { $set: featureItem },
+      (error, result) => {
         if (error) throw error;
         // send back entire updated list, to make sure frontend data is up-to-date
-        collection.find().toArray(function(error, result) {
-            if (error) throw error;
-            res.json(result);
-            console.log('Feature updated succesfully..')
+        collection.find().toArray(function (error, result) {
+          if (error) throw error;
+          res.json(result);
+          console.log("Feature updated successfully..");
         });
-    });
+      }
+    );
   });
 });
-
-
+//Delete IP: 27.147.201.125/32
 app.all("*", (req, res) => {
   res.send(
     '<h1 style="color:red;text-align:center;margin-top:20px">Red Onion Restaurant Server Not Found</h1>'
