@@ -62,7 +62,7 @@ app.get("/foods", (req, res) => {
         res.status(500).send({ message: err });
       } else {
         res.send(document);
-        console.log(" Foods is get successfully from database");
+        console.log("Foods is get successfully from database");
       }
     });
   });
@@ -105,6 +105,27 @@ app.delete("/foods/delete/:id", (req, res) => {
       } else {
         res.send(document.ops[0]);
         console.log(" Foods is  successfully deleted from database");
+      }
+    });
+  });
+});
+
+//add new feature
+app.post("/addfeature", (req, res) => {
+  const feature = req.body;
+  client = new MongoClient(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+  client.connect((err) => {
+    const collection = client.db("redOnionRestaurant").collection("feature");
+    collection.insert(feature, (err, result) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send({ message: err });
+      } else {
+        res.send(result.ops);
+        console.log("Feature insert successfully..");
       }
     });
   });
