@@ -131,6 +131,26 @@ app.post("/addfeature", (req, res) => {
   });
 });
 
+//get all feature from database
+app.get("/feature", (req, res) => {
+  client = new MongoClient(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+  client.connect((err) => {
+    const collection = client.db("redOnionRestaurant").collection("feature");
+    collection.find().toArray((err, document) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send({ message: err });
+      } else {
+        res.send(document);
+        console.log("Feature is get successfully from database");
+      }
+    });
+  });
+});
+
 app.all("*", (req, res) => {
   res.send(
     '<h1 style="color:red;text-align:center;margin-top:20px">Red Onion Restaurant Server Not Found</h1>'
