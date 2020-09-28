@@ -174,6 +174,27 @@ app.get("/feature/:id", (req, res) => {
   });
 });
 
+//delete feature from database
+app.delete("/feature/delete/:id", (req, res) => {
+  const featureId = Number(req.params.id);
+  client = new MongoClient(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+  client.connect((err) => {
+    const collection = client.db("redOnionRestaurant").collection("feature");
+    collection.deleteOne({ id: featureId }).toArray((err, document) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send({ message: err });
+      } else {
+        res.send(document.ops[0]);
+        console.log(" Feature is successfully deleted from database");
+      }
+    });
+  });
+});
+
 
 app.all("*", (req, res) => {
   res.send(
