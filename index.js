@@ -176,6 +176,7 @@ app.get("/feature/:id", (req, res) => {
     });
   });
 });
+
 //delete feature from database
 app.delete("/delete/:id", (req, res) => {
   const featureId = Number(req.params.id);
@@ -192,6 +193,29 @@ app.delete("/delete/:id", (req, res) => {
             if (_error) throw _error;
             res.json(_result);
             console.log("Data is deleted successfully...")
+        });
+    });
+  });
+});
+
+
+//Update feature into the database
+app.put("/update/feature/:id", (req, res) => {
+  const featureId = Number(req.params.id);
+  const featureItem = req.body;
+  client = new MongoClient(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+  client.connect((err) => {
+    const collection = client.db("redOnionRestaurant").collection("feature");
+    collection.updateOne({ id: featureId }, { $set: featureItem }, (error, result) => {
+        if (error) throw error;
+        // send back entire updated list, to make sure frontend data is up-to-date
+        collection.find().toArray(function(error, result) {
+            if (error) throw error;
+            res.json(result);
+            console.log('Feature updated succesfully..')
         });
     });
   });
