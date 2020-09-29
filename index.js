@@ -82,7 +82,7 @@ app.get("/singlefood/:id", (req, res) => {
         console.log(err);
         res.status(500).send({ message: err });
       } else {
-        res.send(document);
+        res.send(document[0]);
         console.log("Single Foods is get successfully from database");
       }
     });
