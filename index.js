@@ -69,7 +69,7 @@ app.get("/foods", (req, res) => {
 });
 
 //Find Food Item by id (single food)
-app.get("/foods/:id", (req, res) => {
+app.get("/singlefood/:id", (req, res) => {
   const foodId = Number(req.params.id);
   client = new MongoClient(uri, {
     useNewUrlParser: true,
