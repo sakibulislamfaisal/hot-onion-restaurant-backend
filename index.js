@@ -36,7 +36,7 @@ app.post("/addfood", (req, res) => {
   });
   client.connect((err) => {
     const collection = client.db("redOnionRestaurant").collection("foods");
-    collection.insertOne(food, (err, result) => {
+    collection.insertMany(food, (err, result) => {
       if (err) {
         console.log(err);
         res.status(500).send({ message: err });
@@ -119,7 +119,7 @@ app.post("/addfeature", (req, res) => {
   });
   client.connect((err) => {
     const collection = client.db("redOnionRestaurant").collection("feature");
-    collection.insertOne(feature, (err, result) => {
+    collection.insert(feature, (err, result) => {
       if (err) {
         console.log(err);
         res.status(500).send({ message: err });
@@ -178,11 +178,6 @@ app.delete("/delete/:id", (req, res) => {
   client = new MongoClient(uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    useMongoClient: true,
-    keepAlive: 1,
-    connectTimeoutMS: 30000,
-    reconnectTries: 30,
-    reconnectInterval: 5000,
   });
   client.connect((err) => {
     const collection = client.db("redOnionRestaurant").collection("feature");
@@ -205,11 +200,6 @@ app.put("/update/feature/:id", (req, res) => {
   client = new MongoClient(uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    useMongoClient: true,
-    keepAlive: 1,
-    connectTimeoutMS: 30000,
-    reconnectTries: 30,
-    reconnectInterval: 5000,
   });
   client.connect((err) => {
     const collection = client.db("redOnionRestaurant").collection("feature");
