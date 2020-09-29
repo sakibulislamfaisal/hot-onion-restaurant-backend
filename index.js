@@ -42,7 +42,7 @@ app.post("/addfood", (req, res) => {
         res.status(500).send({ message: err });
       } else {
         res.send(result.ops);
-        console.log("Inserted Products successfully..");
+        console.log("Inserted foods successfully..");
       }
     });
   });
