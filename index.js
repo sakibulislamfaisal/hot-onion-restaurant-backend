@@ -239,6 +239,26 @@ app.post("/submitorder", (req, res) => {
   });
 });
 
+//get all orders
+app.get("/orders", (req, res) => {
+  client = new MongoClient(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+  client.connect((err) => {
+    const collection = client.db("redOnionRestaurant").collection("orders");
+    collection.find().toArray((err, document) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send({ message: err });
+      } else {
+        res.send(document);
+        console.log("order is get successfully from database");
+      }
+    });
+  });
+});
+
 //Delete IP: 27.147.201.125/32
 app.all("*", (req, res) => {
   res.send(
