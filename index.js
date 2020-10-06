@@ -218,6 +218,27 @@ app.put("/update/feature/:id", (req, res) => {
     );
   });
 });
+
+// Post submit order
+app.post("/submitorder", (req, res) => {
+  const data = req.body;
+  console.log(data);
+  client = new MongoClient(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+  client.connect((err) => {
+    const collection = client.db("redOnionRestaurant").collection("orders");
+    collection.insert(data, (rej, result) => {
+      if (rej) {
+        res.status(500).send("Failed to order request process");
+      } else {
+        res.send(result.ops[0]);
+      }
+    });
+  });
+});
+
 //Delete IP: 27.147.201.125/32
 app.all("*", (req, res) => {
   res.send(
